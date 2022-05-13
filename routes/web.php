@@ -19,3 +19,7 @@ Route::get('/', function () {
 
 
 Route::view('/about', 'pages.about');
+Route::view('/contact', 'pages.contact');
+Route::post('contact', function ($id) {
+    return "thank you for contacting us";
+});
