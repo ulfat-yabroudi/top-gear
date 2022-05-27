@@ -1,22 +1,39 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
+use App\Models\Car;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
-class CategoryController extends Controller
+class CarController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::all();
-        return view('admin.categories.index', compact('categories'));
+        $query = Car::latest();
+
+        if ($request->filled('category')) {
+            $query->where('category_id', $request->category);
+        }
+
+        if ($request->filled('q')) {
+            $query->where(function ($q) use ($request) {
+                $q->Where('brand', 'like', "%$request->q%")
+                ->orWhere('model', 'like', "%$request->q%")
+                ->orWhere('colors', 'like', "%$request->q%");
+            });
+        }
+
+        $cars = $query->paginate(1);
+        $categories = Category::has('cars')->get();
+
+        return view('public.cars.index', compact('cars', 'categories'));
     }
 
     /**
@@ -26,7 +43,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        return view('admin.categories.create');
+        //
     }
 
     /**
@@ -37,23 +54,16 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|min:4|max:255',
-            'capacity' => 'required|numeric|min:2',
-        ]);
-
-        $category = Category::create($validated);
-
-        return redirect()->route('admin.categories.index');
+        //
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Category  $category
+     * @param  \App\Models\Car  $car
      * @return \Illuminate\Http\Response
      */
-    public function show(Category $category)
+    public function show(Car $car)
     {
         //
     }
@@ -61,10 +71,10 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Category  $category
+     * @param  \App\Models\Car  $car
      * @return \Illuminate\Http\Response
      */
-    public function edit(Category $category)
+    public function edit(Car $car)
     {
         //
     }
@@ -73,21 +83,21 @@ class CategoryController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Category  $category
+     * @param  \App\Models\Car  $car
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Category $category)
+    public function update(Request $request, Car $car)
     {
-        // $category->update($validated);
+        //
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Category  $category
+     * @param  \App\Models\Car  $car
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Category $category)
+    public function destroy(Car $car)
     {
         //
     }

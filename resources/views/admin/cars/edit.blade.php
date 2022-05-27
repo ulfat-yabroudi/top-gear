@@ -5,7 +5,7 @@
 @section('content')
     <section class="section py-10" style="padding-bottom: 50px">
         <div class="container">
-            <form action="{{ route('cars.update', $car) }}" method="POST">
+            <form action="{{ route('admin.cars.update', $car) }}" method="POST">
                 @csrf
                 @method('PUT')
                 <div class="form-group">
@@ -21,6 +21,17 @@
                     <input type="text" class="form-control @error('model') is-invalid @enderror" id="model" name="model"
                         placeholder="A4" value="{{ old('model', $car->model) }}">
                     @error('model')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+                <div class="form-group">
+                    <label>Car category</label>
+                    <select name="category_id" class="form-control @error('category_id') is-invalid @enderror">
+                        @foreach ($categories as $category)
+                            <option value="{{ $category->id }}" {{ old('category_id', $car->category_id) == $category->id ? 'selected':'' }}>{{ $category->name }} ({{ $category->capacity }})</option>
+                        @endforeach
+                    </select>
+                    @error('category_id')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
