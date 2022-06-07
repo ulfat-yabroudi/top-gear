@@ -13,7 +13,6 @@ class MessageController extends Controller
 
         return view('messages.index', compact('messages'));
     }
-
     public function show (Message $message)
     {
         return view('messages.show', compact('message'));
@@ -36,5 +35,12 @@ class MessageController extends Controller
         $message->save();
 
         return redirect('/#contact');
+    }
+
+    public function destroy(Message $message)
+    {
+        $message->delete();
+        $messages = Message::all();
+        return view('messages.index',compact('messages'));
     }
 }
